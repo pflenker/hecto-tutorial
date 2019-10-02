@@ -6,4 +6,7 @@
 
 /target
 **/*.rs.bk
-template.html
+package.json
+node_modules/
+create_diffs.js
+diffs/
