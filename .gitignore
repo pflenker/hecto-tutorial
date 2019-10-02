@@ -10,3 +10,4 @@ package.json
 node_modules/
 create_diffs.js
 diffs/
+create_commit.js
