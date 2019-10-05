@@ -6,6 +6,10 @@ fn to_ctrl_byte(c: char) -> u8 {
     byte & 0b0001_1111
 }
 
+fn die(e: std::io::Error) {
+    panic!(e);
+}
+
 fn main() {
     let _stdout = stdout().into_raw_mode().unwrap();
 
