@@ -3,9 +3,9 @@ use termion::event::Key;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-struct Position {
-    x: usize,
-    y: usize,
+pub struct Position {
+    pub x: usize,
+    pub y: usize,
 }
 
 pub struct Editor {
@@ -38,13 +38,13 @@ impl Editor {
 
     fn refresh_screen(&self) -> Result<(), std::io::Error> {
         Terminal::cursor_hide();
-        Terminal::cursor_position(0, 0);
+        Terminal::cursor_position(&Position { x: 0, y: 0 });
         if self.should_quit {
             Terminal::clear_screen();
             println!("Goodbye.\r");
         } else {
             self.draw_rows();
-            Terminal::cursor_position(0, 0);
+            Terminal::cursor_position(&self.cursor_position);
         }
         Terminal::cursor_show();
         Terminal::flush()
