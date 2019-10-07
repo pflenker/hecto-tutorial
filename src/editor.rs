@@ -28,7 +28,7 @@ impl Editor {
     }
 
     fn refresh_screen(&self) -> Result<(), std::io::Error> {
-        print!("\x1b[2J");
+        print!("{}", termion::clear::All);
         io::stdout().flush()
     }
     fn process_keypress(&mut self) -> Result<(), std::io::Error> {
