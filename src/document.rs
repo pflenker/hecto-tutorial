@@ -33,12 +33,12 @@ impl Document {
         if at.y > self.len() {
             return;
         }
-        let new_row = Row::default();
-        if at.y == self.len() || at.y.saturating_add(1) == self.len() {
-            self.rows.push(new_row);
-        } else {
-            self.rows.insert(at.y + 1, new_row)
+        if at.y == self.len() {
+            self.rows.push(Row::default());
+            return;
         }
+        let new_row = self.rows.get_mut(at.y).unwrap().split(at.x);
+        self.rows.insert(at.y + 1, new_row);
     }
     pub fn insert(&mut self, at: &Position, c: char) {
         if c == '\n' {
