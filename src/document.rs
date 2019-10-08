@@ -4,7 +4,7 @@ use std::fs;
 #[derive(Default)]
 pub struct Document {
     rows: Vec<Row>,
-    file_name: Option<String>,
+    pub file_name: Option<String>,
 }
 
 impl Document {
