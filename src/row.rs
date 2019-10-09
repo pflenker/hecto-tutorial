@@ -1,3 +1,4 @@
+use crate::highlighting;
 use crate::SearchDirection;
 use std::cmp;
 use termion::color;
@@ -6,6 +7,7 @@ use unicode_segmentation::UnicodeSegmentation;
 #[derive(Default)]
 pub struct Row {
     string: String,
+    highlighting: Vec<highlighting::Type>,
     len: usize,
 }
 
@@ -13,6 +15,7 @@ impl From<&str> for Row {
     fn from(slice: &str) -> Self {
         Self {
             string: String::from(slice),
+            highlighting: Vec::new(),
             len: slice.graphemes(true).count(),
         }
     }
@@ -112,6 +115,7 @@ impl Row {
         Self {
             string: splitted_row,
             len: splitted_length,
+            highlighting: Vec::new(),
         }
     }
     pub fn as_bytes(&self) -> &[u8] {
