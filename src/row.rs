@@ -27,26 +27,27 @@ impl Row {
         let start = cmp::min(start, end);
         let mut result = String::new();
         #[allow(clippy::integer_arithmetic)]
-        for grapheme in self.string[..]
+        for (index, grapheme) in self.string[..]
             .graphemes(true)
+            .enumerate()
             .skip(start)
             .take(end - start)
         {
             if let Some(c) = grapheme.chars().next() {
+                let highlighting_type = self
+                    .highlighting
+                    .get(index)
+                    .unwrap_or(&highlighting::Type::None);
+                let start_highlight =
+                    format!("{}", termion::color::Fg(highlighting_type.to_color()));
+                result.push_str(&start_highlight[..]);
                 if c == '\t' {
                     result.push_str(" ");
-                } else if c.is_ascii_digit() {
-                    result.push_str(
-                        &format!(
-                            "{}{}{}",
-                            termion::color::Fg(color::Rgb(220, 163, 163)),
-                            c,
-                            color::Fg(color::Reset)
-                        )[..],
-                    );
                 } else {
                     result.push(c);
                 }
+                let end_highlight = format!("{}", termion::color::Fg(color::Reset));
+                result.push_str(&end_highlight[..]);
             }
         }
         result
