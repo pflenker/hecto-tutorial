@@ -158,4 +158,15 @@ impl Row {
         }
         None
     }
+    pub fn highlight(&mut self) {
+        let mut highlighting = Vec::new();
+        for c in self.string.chars() {
+            if c.is_ascii_digit() {
+                highlighting.push(highlighting::Type::Number);
+            } else {
+                highlighting.push(highlighting::Type::None);
+            }
+        }
+        self.highlighting = highlighting;
+    }
 }
