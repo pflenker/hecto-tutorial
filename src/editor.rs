@@ -12,7 +12,7 @@ const STATUS_BG_COLOR: color::Rgb = color::Rgb(239, 239, 239);
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const QUIT_TIMES: u8 = 3;
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Position {
     pub x: usize,
     pub y: usize,
@@ -117,6 +117,27 @@ impl Editor {
             self.status_message = StatusMessage::from("Error writing file!".to_string());
         }
     }
+    fn search(&mut self) {
+        let old_position = self.cursor_position.clone();
+        if let Some(query) = self
+            .prompt("Search: ", |editor, _, query| {
+                if let Some(position) = editor.document.find(&query) {
+                    editor.cursor_position = position;
+                    editor.scroll();
+                }
+            })
+            .unwrap_or(None)
+        {
+            if let Some(position) = self.document.find(&query[..]) {
+                self.cursor_position = position;
+            } else {
+                self.status_message = StatusMessage::from(format!("Not found :{}.", query));
+            }
+        } else {
+            self.cursor_position = old_position;
+            self.scroll();
+        }
+    }
     fn process_keypress(&mut self) -> Result<(), std::io::Error> {
         let pressed_key = Terminal::read_key()?;
         match pressed_key {
@@ -132,23 +153,7 @@ impl Editor {
                 self.should_quit = true
             }
             Key::Ctrl('s') => self.save(),
-            Key::Ctrl('f') => {
-                if let Some(query) = self
-                    .prompt("Search: ", |editor, _, query| {
-                        if let Some(position) = editor.document.find(&query) {
-                            editor.cursor_position = position;
-                            editor.scroll();
-                        }
-                    })
-                    .unwrap_or(None)
-                {
-                    if let Some(position) = self.document.find(&query[..]) {
-                        self.cursor_position = position;
-                    } else {
-                        self.status_message = StatusMessage::from(format!("Not found :{}.", query));
-                    }
-                }
-            }
+            Key::Ctrl('f') => self.search(),
             Key::Char(c) => {
                 self.document.insert(&self.cursor_position, c);
                 self.move_cursor(Key::Right);
