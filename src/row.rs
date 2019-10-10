@@ -127,7 +127,7 @@ impl Row {
         self.string.as_bytes()
     }
     pub fn find(&self, query: &str, at: usize, direction: SearchDirection) -> Option<usize> {
-        if at > self.len {
+        if at > self.len || query.is_empty() {
             return None;
         }
         let start = if direction == SearchDirection::Forward {
@@ -163,15 +163,44 @@ impl Row {
         }
         None
     }
-    pub fn highlight(&mut self) {
+    pub fn highlight(&mut self, word: Option<&str>) {
         let mut highlighting = Vec::new();
-        for c in self.string.chars() {
+        let chars: Vec<char> = self.string.chars().collect();
+        let mut matches = Vec::new();
+        let mut search_index = 0;
+
+        if let Some(word) = word {
+            while let Some(search_match) = self.find(word, search_index, SearchDirection::Forward) {
+                matches.push(search_match);
+                if let Some(next_index) = search_match.checked_add(word[..].graphemes(true).count())
+                {
+                    search_index = next_index;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        let mut index = 0;
+        while let Some(c) = chars.get(index) {
+            if let Some(word) = word {
+                if matches.contains(&index) {
+                    for _ in word[..].graphemes(true) {
+                        index += 1;
+                        highlighting.push(highlighting::Type::Match);
+                    }
+                    continue;
+                }
+            }
+
             if c.is_ascii_digit() {
                 highlighting.push(highlighting::Type::Number);
             } else {
                 highlighting.push(highlighting::Type::None);
             }
+            index += 1;
         }
+
         self.highlighting = highlighting;
     }
 }
