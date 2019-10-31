@@ -205,6 +205,12 @@ impl Row {
             if opts.strings() {
                 if in_string {
                     highlighting.push(highlighting::Type::String);
+
+                    if *c == '\\' && index < self.len().saturating_sub(1) {
+                        highlighting.push(highlighting::Type::String);
+                        index += 2;
+                        continue;
+                    }
                     if *c == '"' {
                         in_string = false;
                         prev_is_separator = true;
