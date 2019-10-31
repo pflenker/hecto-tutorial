@@ -201,7 +201,7 @@ impl Row {
             } else {
                 &highlighting::Type::None
             };
-            if opts.numbers {
+            if opts.numbers() {
                 if (c.is_ascii_digit()
                     && (prev_is_separator || previous_highlight == &highlighting::Type::Number))
                     || (c == &'.' && previous_highlight == &highlighting::Type::Number)
