@@ -1,3 +1,4 @@
+use crate::FileType;
 use crate::Position;
 use crate::Row;
 use crate::SearchDirection;
@@ -9,6 +10,7 @@ pub struct Document {
     rows: Vec<Row>,
     pub file_name: Option<String>,
     dirty: bool,
+    file_type: FileType,
 }
 
 impl Document {
@@ -24,6 +26,7 @@ impl Document {
             rows,
             file_name: Some(filename.to_string()),
             dirty: false,
+            file_type: FileType::default(),
         })
     }
     pub fn row(&self, index: usize) -> Option<&Row> {
