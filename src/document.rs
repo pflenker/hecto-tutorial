@@ -70,6 +70,14 @@ impl Document {
             let row = &mut self.rows[at.y];
             row.insert(at.x, c);
         }
+        self.unhighlight_rows(at.y);
+    }
+
+    fn unhighlight_rows(&mut self, start: usize) {
+        let start = start.saturating_sub(1);
+        for row in self.rows.iter_mut().skip(start) {
+            row.is_highlighted = false;
+        }
     }
     #[allow(clippy::integer_arithmetic, clippy::indexing_slicing)]
     pub fn delete(&mut self, at: &Position) {
@@ -86,6 +94,7 @@ impl Document {
             let row = &mut self.rows[at.y];
             row.delete(at.x);
         }
+        self.unhighlight_rows(at.y);
     }
     pub fn save(&mut self) -> Result<(), Error> {
         if let Some(file_name) = &self.file_name {
