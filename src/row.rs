@@ -217,7 +217,22 @@ impl Row {
         opts: &HighlightingOptions,
         chars: &[char],
     ) -> bool {
+        if *index > 0 {
+            #[allow(clippy::indexing_slicing, clippy::integer_arithmetic)]
+            let prev_char = chars[*index - 1];
+            if !is_separator(prev_char) {
+                return false;
+            }
+        }
         for word in opts.primary_keywords() {
+            if *index < chars.len().saturating_sub(word.len()) {
+                #[allow(clippy::indexing_slicing, clippy::integer_arithmetic)]
+                let next_char = chars[*index + word.len()];
+                if !is_separator(next_char) {
+                    continue;
+                }
+            }
+
             if self.highlight_str(index, word, chars, highlighting::Type::PrimaryKeywords) {
                 return true;
             }
@@ -299,7 +314,6 @@ impl Row {
         }
         false
     }
-
     fn highlight_number(
         &mut self,
         index: &mut usize,
@@ -311,7 +325,7 @@ impl Row {
             if *index > 0 {
                 #[allow(clippy::indexing_slicing, clippy::integer_arithmetic)]
                 let prev_char = chars[*index - 1];
-                if !prev_char.is_ascii_punctuation() && !prev_char.is_ascii_whitespace() {
+                if !is_separator(prev_char) {
                     return false;
                 }
             }
@@ -348,4 +362,8 @@ impl Row {
         }
         self.highlight_match(word);
     }
+}
+
+fn is_separator(c: char) -> bool {
+    c.is_ascii_punctuation() || c.is_ascii_whitespace()
 }
