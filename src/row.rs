@@ -211,11 +211,12 @@ impl Row {
         }
         true
     }
-    fn highlight_primary_keywords(
+    fn highlight_keywords(
         &mut self,
         index: &mut usize,
-        opts: &HighlightingOptions,
         chars: &[char],
+        keywords: &[String],
+        hl_type: highlighting::Type,
     ) -> bool {
         if *index > 0 {
             #[allow(clippy::indexing_slicing, clippy::integer_arithmetic)]
@@ -224,7 +225,7 @@ impl Row {
                 return false;
             }
         }
-        for word in opts.primary_keywords() {
+        for word in keywords {
             if *index < chars.len().saturating_sub(word.len()) {
                 #[allow(clippy::indexing_slicing, clippy::integer_arithmetic)]
                 let next_char = chars[*index + word.len()];
@@ -233,11 +234,38 @@ impl Row {
                 }
             }
 
-            if self.highlight_str(index, word, chars, highlighting::Type::PrimaryKeywords) {
+            if self.highlight_str(index, &word, chars, hl_type) {
                 return true;
             }
         }
         false
+    }
+
+    fn highlight_primary_keywords(
+        &mut self,
+        index: &mut usize,
+        opts: &HighlightingOptions,
+        chars: &[char],
+    ) -> bool {
+        self.highlight_keywords(
+            index,
+            chars,
+            opts.primary_keywords(),
+            highlighting::Type::PrimaryKeywords,
+        )
+    }
+    fn highlight_secondary_keywords(
+        &mut self,
+        index: &mut usize,
+        opts: &HighlightingOptions,
+        chars: &[char],
+    ) -> bool {
+        self.highlight_keywords(
+            index,
+            chars,
+            opts.secondary_keywords(),
+            highlighting::Type::SecondaryKeywords,
+        )
     }
 
     fn highlight_char(
@@ -352,6 +380,7 @@ impl Row {
             if self.highlight_char(&mut index, opts, *c, &chars)
                 || self.highlight_comment(&mut index, opts, *c, &chars)
                 || self.highlight_primary_keywords(&mut index, &opts, &chars)
+                || self.highlight_secondary_keywords(&mut index, &opts, &chars)
                 || self.highlight_string(&mut index, opts, *c, &chars)
                 || self.highlight_number(&mut index, opts, *c, &chars)
             {
