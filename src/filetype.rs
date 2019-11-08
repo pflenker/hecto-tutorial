@@ -127,4 +127,10 @@ impl HighlightingOptions {
     pub fn comments(&self) -> bool {
         self.comments
     }
+    pub fn primary_keywords(&self) -> &Vec<String> {
+        &self.primary_keywords
+    }
+    pub fn secondary_keywords(&self) -> &Vec<String> {
+        &self.secondary_keywords
+    }
 }
