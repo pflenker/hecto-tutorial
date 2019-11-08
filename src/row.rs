@@ -189,7 +189,7 @@ impl Row {
     fn highlight_char(
         &mut self,
         index: &mut usize,
-        opts: HighlightingOptions,
+        opts: &HighlightingOptions,
         c: char,
         chars: &[char],
     ) -> bool {
@@ -217,7 +217,7 @@ impl Row {
     fn highlight_comment(
         &mut self,
         index: &mut usize,
-        opts: HighlightingOptions,
+        opts: &HighlightingOptions,
         c: char,
         chars: &[char],
     ) -> bool {
@@ -238,7 +238,7 @@ impl Row {
     fn highlight_string(
         &mut self,
         index: &mut usize,
-        opts: HighlightingOptions,
+        opts: &HighlightingOptions,
         c: char,
         chars: &[char],
     ) -> bool {
@@ -264,7 +264,7 @@ impl Row {
     fn highlight_number(
         &mut self,
         index: &mut usize,
-        opts: HighlightingOptions,
+        opts: &HighlightingOptions,
         c: char,
         chars: &[char],
     ) -> bool {
@@ -291,7 +291,7 @@ impl Row {
         }
         false
     }
-    pub fn highlight(&mut self, opts: HighlightingOptions, word: Option<&str>) {
+    pub fn highlight(&mut self, opts: &HighlightingOptions, word: Option<&str>) {
         self.highlighting = Vec::new();
         let chars: Vec<char> = self.string.chars().collect();
         let mut index = 0;

@@ -7,6 +7,8 @@ pub enum Type {
     String,
     Character,
     Comment,
+    PrimaryKeywords,
+    SecondaryKeywords,
 }
 
 impl Type {
@@ -17,6 +19,8 @@ impl Type {
             Type::String => color::Rgb(211, 54, 130),
             Type::Character => color::Rgb(108, 113, 196),
             Type::Comment => color::Rgb(133, 153, 0),
+            Type::PrimaryKeywords => color::Rgb(181, 137, 0),
+            Type::SecondaryKeywords => color::Rgb(42, 161, 152),
             _ => color::Rgb(255, 255, 255),
         }
     }
