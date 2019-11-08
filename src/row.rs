@@ -165,7 +165,7 @@ impl Row {
         None
     }
 
-    fn highlight_match(&mut self, word: Option<&str>) {
+    fn highlight_match(&mut self, word: &Option<String>) {
         if let Some(word) = word {
             if word.is_empty() {
                 return;
@@ -403,7 +403,7 @@ impl Row {
     pub fn highlight(
         &mut self,
         opts: &HighlightingOptions,
-        word: Option<&str>,
+        word: &Option<String>,
         start_with_comment: bool,
     ) -> bool {
         self.highlighting = Vec::new();
