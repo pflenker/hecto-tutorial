@@ -179,7 +179,7 @@ impl Row {
                 if let Some(next_index) = search_match.checked_add(word[..].graphemes(true).count())
                 {
                     #[allow(clippy::indexing_slicing)]
-                    for i in index.saturating_add(search_match)..next_index {
+                    for i in search_match..next_index {
                         self.highlighting[i] = highlighting::Type::Match;
                     }
                     index = next_index;
@@ -465,4 +465,48 @@ impl Row {
 
 fn is_separator(c: char) -> bool {
     c.is_ascii_punctuation() || c.is_ascii_whitespace()
+}
+
+#[cfg(test)]
+mod test_super {
+    use super::*;
+
+    #[test]
+    fn test_highlight_find() {
+        let mut row = Row::from("1testtest");
+        row.highlighting = vec![
+            highlighting::Type::Number,
+            highlighting::Type::None,
+            highlighting::Type::None,
+            highlighting::Type::None,
+            highlighting::Type::None,
+            highlighting::Type::None,
+            highlighting::Type::None,
+            highlighting::Type::None,
+            highlighting::Type::None,
+        ];
+        row.highlight_match(&Some("t".to_string()));
+        assert_eq!(
+            vec![
+                highlighting::Type::Number,
+                highlighting::Type::Match,
+                highlighting::Type::None,
+                highlighting::Type::None,
+                highlighting::Type::Match,
+                highlighting::Type::Match,
+                highlighting::Type::None,
+                highlighting::Type::None,
+                highlighting::Type::Match
+            ],
+            row.highlighting
+        )
+    }
+
+    #[test]
+    fn test_find() {
+        let row = Row::from("1testtest");
+        assert_eq!(row.find("t", 0, SearchDirection::Forward), Some(1));
+        assert_eq!(row.find("t", 2, SearchDirection::Forward), Some(4));
+        assert_eq!(row.find("t", 5, SearchDirection::Forward), Some(5));
+    }
 }
