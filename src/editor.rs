@@ -6,6 +6,7 @@ use std::time::Duration;
 use std::time::Instant;
 use termion::color;
 use termion::event::Key;
+use unicode_segmentation::UnicodeSegmentation;
 
 const STATUS_FG_COLOR: color::Rgb = color::Rgb(63, 63, 63);
 const STATUS_BG_COLOR: color::Rgb = color::Rgb(239, 239, 239);
@@ -388,7 +389,13 @@ impl Editor {
             self.refresh_screen()?;
             let key = Terminal::read_key()?;
             match key {
-                Key::Backspace => result.truncate(result.len().saturating_sub(1)),
+                Key::Backspace => {
+                    let graphemes_cnt = result.graphemes(true).count();
+                    result = result
+                        .graphemes(true)
+                        .take(graphemes_cnt.saturating_sub(1))
+                        .collect();
+                }
                 Key::Char('\n') => break,
                 Key::Char(c) => {
                     if !c.is_control() {
