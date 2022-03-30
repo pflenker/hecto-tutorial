@@ -412,14 +412,6 @@ impl Row {
     ) -> bool {
         let chars: Vec<char> = self.string.chars().collect();
         if self.is_highlighted && word.is_none() {
-            if let Some(hl_type) = self.highlighting.last() {
-                if *hl_type == highlighting::Type::MultilineComment
-                    && self.string.len() > 1
-                    && self.string[self.string.len() - 2..] == *"*/"
-                {
-                    return true;
-                }
-            }
             return false;
         }
         self.highlighting = Vec::new();
