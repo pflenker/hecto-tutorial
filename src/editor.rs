@@ -153,7 +153,7 @@ impl Editor {
                     if let Some(position) =
                         editor
                             .document
-                            .find(&query, &editor.cursor_position, direction)
+                            .find(query, &editor.cursor_position, direction)
                     {
                         editor.cursor_position = position;
                         editor.scroll();
