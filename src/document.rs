@@ -130,7 +130,7 @@ impl Document {
         };
         for _ in start..end {
             if let Some(row) = self.rows.get(position.y) {
-                if let Some(x) = row.find(&query, position.x, direction) {
+                if let Some(x) = row.find(query, position.x, direction) {
                     position.x = x;
                     return Some(position);
                 }
@@ -161,7 +161,7 @@ impl Document {
         #[allow(clippy::indexing_slicing)]
         for row in &mut self.rows[..until] {
             start_with_comment = row.highlight(
-                &self.file_type.highlighting_options(),
+                self.file_type.highlighting_options(),
                 word,
                 start_with_comment,
             );
