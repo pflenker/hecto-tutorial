@@ -361,6 +361,13 @@ impl Row {
                 *index += 1;
                 if let Some(next_char) = chars.get(*index) {
                     if *next_char == '"' {
+                        if let Some(prev_char) = chars.get(*index - 1) {
+                            if *prev_char != '\\' {
+                                break;
+                            } else {
+                                continue;
+                            }
+                        };
                         break;
                     }
                 } else {
@@ -469,6 +476,10 @@ fn is_separator(c: char) -> bool {
 
 #[cfg(test)]
 mod test_super {
+    use std::iter::repeat;
+
+    use crate::FileType;
+
     use super::*;
 
     #[test]
@@ -508,5 +519,24 @@ mod test_super {
         assert_eq!(row.find("t", 0, SearchDirection::Forward), Some(1));
         assert_eq!(row.find("t", 2, SearchDirection::Forward), Some(4));
         assert_eq!(row.find("t", 5, SearchDirection::Forward), Some(5));
+    }
+
+    #[test]
+    fn string_highlighting_ignores_escaped_quotes() {
+        let mut row = Row::from(r#""foo\"bar\"""#);
+        let rust_ft = FileType::from("test.rs");
+        let opts = rust_ft.highlighting_options();
+        let mut index = 0;
+        let chars: Vec<char> = row.string.chars().collect();
+        let c = chars[index];
+
+        row.highlight_string(&mut index, &opts, c, &chars);
+
+        assert_eq!(
+            repeat(highlighting::Type::String)
+                .take(12)
+                .collect::<Vec<highlighting::Type>>(),
+            row.highlighting
+        )
     }
 }
