@@ -514,6 +514,14 @@ mod test_super {
     }
 
     #[test]
+    fn test_find() {
+        let row = Row::from("1testtest");
+        assert_eq!(row.find("t", 0, SearchDirection::Forward), Some(1));
+        assert_eq!(row.find("t", 2, SearchDirection::Forward), Some(4));
+        assert_eq!(row.find("t", 5, SearchDirection::Forward), Some(5));
+    }
+
+    #[test]
     fn string_highlighting_ignores_escaped_quotes() {
         let mut row = Row::from(r#""foo\"bar\"""#);
         let rust_ft = FileType::from("test.rs");
@@ -530,13 +538,5 @@ mod test_super {
                 .collect::<Vec<highlighting::Type>>(),
             row.highlighting
         )
-    }
-
-    #[test]
-    fn test_find() {
-        let row = Row::from("1testtest");
-        assert_eq!(row.find("t", 0, SearchDirection::Forward), Some(1));
-        assert_eq!(row.find("t", 2, SearchDirection::Forward), Some(4));
-        assert_eq!(row.find("t", 5, SearchDirection::Forward), Some(5));
     }
 }
