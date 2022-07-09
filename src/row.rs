@@ -515,7 +515,7 @@ mod test_super {
 
     #[test]
     fn string_highlighting_ignores_escaped_quotes() {
-        let mut row = Row::from("\"foo\\\"bar\\\"\"");
+        let mut row = Row::from(r#""foo\"bar\"""#);
         let rust_ft = FileType::from("test.rs");
         let opts = rust_ft.highlighting_options();
         let mut index = 0;
