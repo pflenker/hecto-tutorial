@@ -415,10 +415,12 @@ impl Row {
             if let Some(hl_type) = self.highlighting.last() {
                 if *hl_type == highlighting::Type::MultilineComment
                     && self.string.len() > 1
-                    && self.string[self.string.len() - 2..] == *"*/"
+                    && self.string[self.string.len() - 2..] != *"*/"
                 {
                     return true;
                 }
+            } else if start_with_comment {
+                return true;
             }
             return false;
         }
